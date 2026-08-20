@@ -72,12 +72,17 @@ async function runBacktest() {
     setMsg("回测中…");
     try {
         const resp = await post("/api/backtest", req);
+        if (!resp || !Array.isArray(resp.horizon_steps) || !Array.isArray(resp.mape) ||
+            !Array.isArray(resp.rmse) || !Array.isArray(resp.mae)) {
+            setMsg("请求失败：响应缺少必要数组字段。原始响应：" + JSON.stringify(resp).slice(0, 200), true);
+            return;
+        }
         let html = "<table><thead><tr><th>步数</th><th>MAPE(%)</th><th>RMSE</th><th>MAE</th></tr></thead><tbody>";
-        for (let i = 0; i < resp.horizonSteps.length; i++) {
-            html += `<tr><td>${resp.horizonSteps[i]}</td><td>${fmt(resp.mape[i])}</td><td>${fmt(resp.rmse[i])}</td><td>${fmt(resp.mae[i])}</td></tr>`;
+        for (let i = 0; i < resp.horizon_steps.length; i++) {
+            html += `<tr><td>${resp.horizon_steps[i]}</td><td>${fmt(resp.mape[i])}</td><td>${fmt(resp.rmse[i])}</td><td>${fmt(resp.mae[i])}</td></tr>`;
         }
         html += "</tbody></table>";
-        html += `<div class="overall">整体：MAPE <b>${fmt(resp.overallMape)}%</b> · RMSE <b>${fmt(resp.overallRmse)}</b> · MAE <b>${fmt(resp.overallMae)}</b> · 模型 <b>${resp.model}</b></div>`;
+        html += `<div class="overall">整体：MAPE <b>${fmt(resp.overall_mape)}%</b> · RMSE <b>${fmt(resp.overall_rmse)}</b> · MAE <b>${fmt(resp.overall_mae)}</b> · 模型 <b>${resp.model}</b></div>`;
         $("bt").innerHTML = html;
         setMsg(resp.note || "回测完成");
     } catch (e) {
