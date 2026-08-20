@@ -1,0 +1,3 @@
+# Windows 批处理脚本必须保持 CRLF 行尾，否则 cmd 解析异常（报"系统找不到指定的路径"）
+*.bat text eol=crlf
+*.cmd text eol=crlf
