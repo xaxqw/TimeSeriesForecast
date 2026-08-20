@@ -47,6 +47,11 @@ async function runForecast() {
     setMsg("预测中…");
     try {
         const resp = await post("/api/forecast", req);
+        if (!resp || !Array.isArray(resp.history) || !Array.isArray(resp.forecast) ||
+            !Array.isArray(resp.lower) || !Array.isArray(resp.upper)) {
+            setMsg("请求失败：响应缺少必要数组字段。原始响应：" + JSON.stringify(resp).slice(0, 200), true);
+            return;
+        }
         $("m-model").textContent = resp.model;
         $("m-mape").textContent = fmt(resp.mape) + "%";
         $("m-rmse").textContent = fmt(resp.rmse);
@@ -83,6 +88,14 @@ async function runBacktest() {
 // ---------- 渲染 ----------
 function renderChart(history, forecast, lower, upper) {
     const ctx = $("chart").getContext("2d");
+    history = Array.isArray(history) ? history : [];
+    forecast = Array.isArray(forecast) ? forecast : [];
+    lower = Array.isArray(lower) ? lower : [];
+    upper = Array.isArray(upper) ? upper : [];
+    if (history.length === 0) {
+        setMsg("无历史数据，跳过图表渲染", true);
+        return;
+    }
     const N = history.length, h = forecast.length, total = N + h;
     const labels = Array.from({ length: total }, (_, i) => i + 1);
 
