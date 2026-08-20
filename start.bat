@@ -33,6 +33,7 @@ if errorlevel 1 (
 echo [3/3] 启动 FastAPI 服务...
 echo       浏览器请手动打开: http://localhost:8000
 echo.
+start "" "http://localhost:8000"
 "%VENV_PY%" -m uvicorn api:app --reload --host 0.0.0.0 --port 8000
 goto END
 
