@@ -3,6 +3,12 @@ target/
 out/
 *.class
 
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
 # IDE
 .idea/
 *.iml
